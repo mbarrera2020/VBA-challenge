@@ -19,9 +19,10 @@ Range("L" & 1).Value = "Total Stock Volume"
 
 'TEMP headers & holders -- to be modified (no need to print?)
 'Range("M" & 1).Value = "Date Last-4" -- to be deleted -- no longer needed
-Range("N" & 1).Value = "Start Price"
-Range("O" & 1).Value = "End Price"
-Range("P" & 1).Value = "Diff"
+'Range("N" & 1).Value = "Start Price"
+'Range("O" & 1).Value = "End Price"
+'Range("P" & 1).Value = "Diff"
+
 Dim Start_Price As Double
 Dim End_Price As Double
 Dim Diff As Double
@@ -65,12 +66,12 @@ For i = 2 To lastrow
     Stock_Date = Right((Range("B" & i).Value), 4)
     If Stock_Date = "0101" Then
         
-        'Print last 4 of stock_date -- just for reference testing only -- to be deleted
+        'Print last 4 char of stock_date -- just for reference testing only -- to be deleted
         'Range("M" & i).Value = Stock_Date
         
         'Get the start price & print
         Start_Price = Cells(i, 3).Value
-        Range("N" & Summary_Table_Row).Value = Start_Price
+        'Range("N" & Summary_Table_Row).Value = Start_Price -- TEMP for debugging
         
     End If
     
@@ -93,14 +94,14 @@ For i = 2 To lastrow
         'Print the Stock_Total in the summary table
         Range("L" & Summary_Table_Row).Value = Stock_Total
         
-        'Print the End Price in the summary table
-        Range("O" & Summary_Table_Row).Value = Cells(i, 6).Value
+        'Print the End Price in the summary table -- TEMP for debugging
+        'Range("O" & Summary_Table_Row).Value = Cells(i, 6).Value
         
         'Calculate price difference
         Diff = End_Price - Start_Price
         
-        'Print the Difference in the summary table
-        Range("P" & Summary_Table_Row).Value = Diff
+        'Print the Difference in the summary table -- TEMP for debugging
+        'Range("P" & Summary_Table_Row).Value = Diff
         
         
         'Calculate the Yearly Change (aka Diff), Percent Change & print to summary table & change cell color
@@ -143,5 +144,85 @@ For i = 2 To lastrow
     'Right align the column headers
     Range("J1:L1").HorizontalAlignment = xlRight
     
+    '--------------------------------------------------------------------------------------
+    'Part 2 -- "Greatest % increase", "Greatest % decrease" and "Greatest total volume".
+    '--------------------------------------------------------------------------------------
+    'Go through the summary rows of the spreadsheet
+    Dim GPI As Double     'Greatest_Percent_Increase
+    Dim GPD As Double     'Greatest_Percent_Decrease
+    Dim GTL As Double     'Greatest_Total_Volume
+    Dim GPI_Ticker As String
+    Dim GPD_Ticker As String
+    Dim GTL_Ticker As String
+    
+    'Determine last row of summary cells
+    Range("I1").End(xlDown).Select
+    Summary_LastRow = ActiveCell.Row
+    'MsgBox Summary_LastRow   -- for testing only
+    
+    'Initialize variables for comparison
+    GPI = Cells(2, 11)
+    GPD = Range("K2").Value
+    GTL = Range("L2").Value
+    GPI_Ticker = Cells(2, 9).Value
+    GPD_Ticker = Cells(2, 9).Value
+    GTL_Ticker = Cells(2, 9).Value
+    'MsgBox GPI_Ticker
+    'MsgBox GPD_Ticker
+    'MsgBox GTL_Ticker
+        
+    'Loop through all the rows of the summary table to get GPI, GPD, GTL
+    For i = 2 To Summary_LastRow
+    
+    'If GPI is < percent change then update GPI
+    If GPI < Cells(i, 11) Then
+        GPI = Cells(i, 11)
+        GPI_Ticker = Cells(i, 9)
+    End If
+    
+    'If GPD > percent change then update GPD
+    If GPD > Cells(i, 11) Then
+        GPD = Cells(i, 11)
+        GPD_Ticker = Cells(i, 9)
+    End If
+    
+    'If GTL is less then update GPI
+    If GTL < Cells(i, 12) Then
+        GTL = Cells(i, 12)
+        GPI_Ticker = Cells(i, 9)
+    End If
+        
+    Next i
+    
+    'Print the Greatest summary table
+    Cells(1, 16) = "Ticker"
+    Cells(1, 17) = "Value"
+    
+    Cells(2, 15) = "Greatest % Increase"
+    Cells(3, 15) = "Greatest % Decrease"
+    Cells(4, 15) = "Greatest Total Volume"
+    
+    Cells(2, 16) = GPI_Ticker
+    Cells(3, 16) = GPD_Ticker
+    Cells(4, 16) = GTL_Ticker
+    
+    Cells(2, 17) = GPI
+    Cells(3, 17) = GPD
+    Cells(4, 17) = GTL
+        
+    'Adjust column widths for Greatest summary table
+    Range("O1").ColumnWidth = 21
+    Range("P1").ColumnWidth = 9
+    Range("Q1").ColumnWidth = 14
+         
+    'Left align Ticker header
+    Range("P1").HorizontalAlignment = xlLeft
+    'Right align Value header
+    Range("Q1").HorizontalAlignment = xlRight
+    
+    Range("A2").Select
+    
 End Sub
+
+
 
