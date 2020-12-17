@@ -186,10 +186,10 @@ For i = 2 To lastrow
         GPD_Ticker = Cells(i, 9)
     End If
     
-    'If GTL is less then update GPI
+    'If GTL is less then update GTL
     If GTL < Cells(i, 12) Then
         GTL = Cells(i, 12)
-        GPI_Ticker = Cells(i, 9)
+        GTL_Ticker = Cells(i, 9)
     End If
         
     Next i
@@ -223,6 +223,5 @@ For i = 2 To lastrow
     Range("A2").Select
     
 End Sub
-
 
 
